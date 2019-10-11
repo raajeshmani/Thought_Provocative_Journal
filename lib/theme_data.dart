@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'dart:collection';
+import 'dart:ui';
 
+class Router {
+
+  static final String writeDiary = '/WriteDiary';
+  static final String display = '/Display'; 
+  static final String viewPages = '/ViewPages'; 
+  static final String textInputScreen = '/TextInputScreen'; 
+  
+}
 ThemeData themeData = ThemeData(
   primaryColor: Ui.purpleButtonColor,
   fontFamily: 'Google Sans',
@@ -22,13 +31,6 @@ ThemeData themeData = ThemeData(
 final primaryColor = Color(0xff203152);
 final greyColor = Color(0xffaeaeae);
 final greyColor2 = Color(0xffE8E8E8);
-
-class EmotionsData {
-  String name;
-  Color colorData;
-
-  EmotionsData(this.name, this.colorData);
-}
 
 class Ui {
   static final hintText = "Compose one";
@@ -149,6 +151,8 @@ class Ui {
     color: Ui.emoticonButtonColor,
     fontSize: 16.0,
   );
+
+  static final emotionTextFontSize = 17.0;
 
   static final ShapeBorder borderDefined = RoundedRectangleBorder(
       borderRadius: new BorderRadius.only(

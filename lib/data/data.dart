@@ -22,10 +22,10 @@ var storyTagLine = [
 ];
 
 var emotions = [
-  ['accepted','surprised'],
+  ['accepted', 'surprised'],
   ['mad'],
   ['aroused', 'cheeky'],
-  ['shocked', 'provoked','astonished','stressed'],
+  ['shocked', 'provoked', 'astonished', 'stressed'],
   ['aroused', 'mad'],
   ['despair'],
   [''],
@@ -42,8 +42,13 @@ var coloredEmotions = [
   0xFF78e08f,
 ];
 
-String baseEmotionLinkJson = """
-{
+List<String> emotionsForSegment = [];
+
+List<String> allEmotions = ['abandoned', 'accepted', 'aggressive', 'amazed', 'angry', 'annoyed', 'anxious', 'apathetic', 'appalled', 'aroused', 'ashamed', 'astonished', 'awe', 'awful', 'bad', 'betrayed', 'bitter', 'bored', 'busy', 'cheeky', 'confident', 'confused', 'content', 'courageous', 'creative', 'critical', 'curious', 'depressed', 'despair', 'detestable', 'disappointed', 'disapproving', 'disgusted', 'disillusioned', 'dismayed', 'dismissive', 'disrespected', 'dissapointed', 'distant', 'eager', 'embarrased', 'embarrassed', 'empty', 'energetic', 'excited', 'excluded', 'exposed', 'fearful', 'fragile', 'free', 'frightened', 'frustrated', 'furious', 'grief', 'guilty', 'happy', 'helpess', 'hesitant', 'hopeful', 'horrified', 'hostile', 'humiliated', 'hurt', 'inadequate', 'indifferent', 'indignant', 'inferior', 'infuriated', 'inquisitive', 'insecure', 
+'insignificant', 'inspired', 'interested', 'intimate', 'isolated', 'jealous', 'joyful', 'judgmental', 'let down', 'lonely', 'mad', 'nauseated', 'nervous', 'numb', 'optimistic', 'out of control', 'overwhelmed', 'perplexed', 'persecuted', 'playful', 'powerful', 'powerless', 'pressured', 'proud', 'provoked', 'rejected', 'remorseful', 'repelled', 'resentful', 'respected', 'revolted', 'ridiculed', 'rushed', 'sad', 'scared', 'sensitive', 'shocked', 'skeptical', 'sleepy', 'startled', 'stressed', 'successful', 'surprised', 'threatened', 'tired', 'trusting', 
+'unfocussed', 'valued', 'victimized', 'violated', 'vulnerable', 'weak', 'withdrawn', 'worried', 'worthless'];
+
+var allEmotionsMappedToBase = {
   "surprised":"surprised",
   "startled": "surprised",
   "shocked": "surprised",
@@ -57,6 +62,7 @@ String baseEmotionLinkJson = """
   "excited": "surprised",
   "eager": "surprised",
   "energetic": "surprised",
+  "happy":"happy",
   "playful": "happy",
   "aroused": "happy",
   "cheeky": "happy",
@@ -81,6 +87,7 @@ String baseEmotionLinkJson = """
   "optimistic": "happy",
   "hopeful": "happy",
   "inspired": "happy",
+  "sad":"sad",
   "lonely": "sad",
   "isolated": "sad",
   "abandoned": "sad",
@@ -94,11 +101,12 @@ String baseEmotionLinkJson = """
   "ashamed": "sad",
   "remorseful": "sad",
   "depressed": "sad",
-  "inferior": "fearful",
+  "inferior": "sad",
   "empty": "sad",
   "hurt": "sad",
   "dissapointed": "sad",
   "embarrased": "sad",
+  "disgusted":"disgusted",
   "disapproving": "disgusted",
   "judgmental": "disgusted",
   "embarrassed": "disgusted",
@@ -111,6 +119,7 @@ String baseEmotionLinkJson = """
   "repelled": "disgusted",
   "horrified": "disgusted",
   "hesitant": "disgusted",
+  "angry":"angry",
   "let down": "angry",
   "betrayed": "angry",
   "resentful": "angry",
@@ -135,6 +144,7 @@ String baseEmotionLinkJson = """
   "critical": "angry",
   "skeptical": "angry",
   "dismissive": "angry",
+  "fearful":"fearful",
   "scared": "fearful",
   "helpess": "fearful",
   "frightened": "fearful",
@@ -152,6 +162,7 @@ String baseEmotionLinkJson = """
   "threatened": "fearful",
   "nervous": "fearful",
   "exposed": "fearful",
+  "bad":"bad",
   "bored": "bad",
   "indifferent": "bad",
   "apathetic": "bad",
@@ -163,10 +174,66 @@ String baseEmotionLinkJson = """
   "tired": "bad",
   "sleepy": "bad",
   "unfocussed": "bad"
-}
-""";
+};
 
-String jsonStr = """{
+var emotionMapper = {
+  "surprised": {
+    "startled": ["shocked", "dismayed"],
+    "confused": ["disillusioned", "perplexed"],
+    "amazed": ["astonished", "awe"],
+    "excited": ["eager", "energetic"]
+  },
+  "happy": {
+    "playful": ["aroused", "cheeky"],
+    "content": ["free", "joyful"],
+    "interested": ["curious", "inquisitive"],
+    "proud": ["successful", "confident"],
+    "accepted": ["respected", "valued"],
+    "powerful": ["courageous", "creative"],
+    "trusting": ["sensitive", "intimate"],
+    "optimistic": ["hopeful", "inspired"]
+  },
+  "sad": {
+    "lonely": ["isolated", "abandoned"],
+    "vulnerable": ["victimized", "fragile"],
+    "despair": ["grief", "powerless"],
+    "guilty": ["ashamed", "remorseful"],
+    "depressed": ["inferior", "empty"],
+    "hurt": ["dissapointed", "embarrased"]
+  },
+  "disgusted": {
+    "disapproving": ["judgmental"],
+    "disappointed": ["appalled", "revolted"],
+    "awful": ["nauseated", "detestable"],
+    "repelled": ["horrified", "hesitant"]
+  },
+  "angry": {
+    "let down": ["betrayed", "resentful"],
+    "humiliated": ["disrespected", "ridiculed"],
+    "bitter": ["indignant", "violated"],
+    "mad": ["furious", "jealous"],
+    "aggressive": ["provoked", "hostile"],
+    "frustrated": ["infuriated", "annoyed"],
+    "distant": ["withdrawn", "numb"],
+    "critical": ["skeptical", "dismissive"]
+  },
+  "fearful": {
+    "scared": ["helpess", "frightened"],
+    "anxious": ["overwhelmed", "worried"],
+    "insecure": ["inadequate", "inferior"],
+    "weak": ["worthless", "insignificant"],
+    "rejected": ["excluded", "persecuted"],
+    "threatened": ["nervous", "exposed"]
+  },
+  "bad": {
+    "bored": ["indifferent", "apathetic"],
+    "busy": ["pressured", "rushed"],
+    "stressed": ["overwhelmed", "out of control"],
+    "tired": ["sleepy", "unfocussed"]
+  }
+};
+
+String emotionsJson = """{
 	"emotions": [{
 			"surprised": {
 				"startled": ["shocked", "dismayed"],

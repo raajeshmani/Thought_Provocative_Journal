@@ -24,7 +24,6 @@ class EventCard extends StatefulWidget {
 class _EventCardState extends State<EventCard> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -81,23 +80,19 @@ class _EventCardState extends State<EventCard> {
     );
   }
 
-  String getBaseEmotion(String emotion) {
-    Map<String, dynamic> myMap = json.decode(baseEmotionLinkJson);
-    String baseEmotion = myMap[emotion];
-    return baseEmotion;
-  }
-
   Widget getEmotionsWidget() {
     return Expanded(
       child: Row(
         children: widget.emotion
             .map(
-              (item) => new Text(item,
-                  style: TextStyle(
-                    color: Ui.emotionColors[getBaseEmotion(item)],
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15.0,
-                  )),
+              (item) => new Text(
+                item,
+                style: TextStyle(
+                  color: Ui.emotionColors[allEmotionsMappedToBase[item]],
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15.0,
+                ),
+              ),
             )
             .toList(),
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

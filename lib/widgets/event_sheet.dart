@@ -15,7 +15,7 @@ class EventSheet extends StatefulWidget {
     this.emotion,
     this.index,
   }) : super(key: key);
-  
+
   @override
   _EventSheetState createState() => _EventSheetState();
 }
@@ -24,8 +24,7 @@ class _EventSheetState extends State<EventSheet> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-    });
+    setState(() {});
   }
 
   @override
@@ -40,7 +39,12 @@ class _EventSheetState extends State<EventSheet> {
               children: <Widget>[
                 widget.emotion[0] != ''
                     ? getEmotionsWidget()
-                    : Padding(padding: EdgeInsets.all(12.0),child: Text('Emotion Not Tagged Yet', style: TextStyle(color: Colors.grey, fontSize: 15.0),)),
+                    : Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text(
+                          'Emotion Not Tagged Yet',
+                          style: TextStyle(color: Colors.grey, fontSize: 15.0),
+                        )),
               ],
             ),
           ),
@@ -60,33 +64,28 @@ class _EventSheetState extends State<EventSheet> {
               ),
             ),
           ),
+          SizedBox(height: 40.0,),
         ],
       ),
     );
   }
 
-  String getBaseEmotion(String emotion) {
-    Map<String, dynamic> myMap = json.decode(baseEmotionLinkJson);
-    String baseEmotion = myMap[emotion];
-    // print(baseEmotion);
-    // print('affafaafa');
-    // print(Ui.emotionColors);
-    // print(Ui.emotionColors[baseEmotion]);
-    return baseEmotion;
-  }
-
   Widget getEmotionsWidget() {
     return Row(
       children: widget.emotion
-          .map((item) => new FlatButton(
-                child: Text(
-                  item,
-                  style: Ui.whiteButtonTextStyle,
-                ),
-                onPressed: () => {},
-                shape: Ui.fullborder,
-                color: Ui.emotionColors[getBaseEmotion(item)],
-              ))
+          .map(
+            (item) => Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                item,
+                style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: Ui.emotionTextFontSize,
+                      color: Ui.emotionColors[allEmotionsMappedToBase[item]],
+                    ),
+              ),
+            ),
+          ) 
           .toList(),
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     );

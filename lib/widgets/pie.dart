@@ -33,23 +33,34 @@ class _PieState extends State<Pie> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: PieChart(
-          dataMap: dataMap, //Required parameter
-          legendFontColor: Colors.blueGrey[900],
-          legendFontSize: 14.0,
-          legendFontWeight: FontWeight.w500,
-          animationDuration: Duration(milliseconds: 800),
-          chartLegendSpacing: 32.0,
-          chartRadius: MediaQuery.of(context).size.width / 2.7,
-          showChartValuesInPercentage: true,
-          showChartValues: true,
-          showChartValuesOutside: true,
-          chartValuesColor: Colors.blueGrey[900].withOpacity(0.9),
-          colorList: Ui.colorList,
-          showLegends: true,
-          initialAngle: math.pi * 0.5,
-        ),
+      body: Column(
+        children: <Widget>[
+          Spacer(),
+          Center(
+            child: Text('Your Emotions',style: Ui.dateTextStyle,),
+          ),
+          SizedBox(height: 80.0,),
+          Container(
+            child: PieChart(
+              dataMap: dataMap, //Required parameter
+              legendFontColor: Colors.blueGrey[900],
+              legendFontSize: 14.0,
+              legendFontWeight: FontWeight.w500,
+              animationDuration: Duration(milliseconds: 800),
+              chartLegendSpacing: 32.0,
+              chartRadius: MediaQuery.of(context).size.width / 2.7,
+              showChartValuesInPercentage: true,
+              showChartValues: true,
+              showChartValuesOutside: true,
+              chartValuesColor: Colors.blueGrey[900].withOpacity(0.9),
+              colorList: Ui.colorList,
+              showLegends: true,
+              initialAngle: math.pi * 0.5,
+            ),
+          ),
+          Spacer(),
+
+        ],
       ),
     );
   }

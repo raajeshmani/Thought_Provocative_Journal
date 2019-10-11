@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme_data.dart';
 import '../data/data.dart';
+import '../tools/text_input_screen.dart';
 
 import 'dart:convert';
 
@@ -12,78 +13,77 @@ class EmotionSheet extends StatefulWidget {
 class _EmotionSheetState extends State<EmotionSheet> {
   List<String> basicEmotions;
   List<String> deepEmotions;
-  List<String> finalEmotions;
-  List<dynamic> tooDeepEmotions;
+  List<String> tooDeepEmotions;
+  List<String> result;
   Color colorVal;
 
-  bool deep = false;
-  bool toodeep = false;
+  String selectedBasicEmotion;
+  String selectedDeepEmotion;
   @override
   void initState() {
-    basicEmotions = [];
+    basicEmotions = emotionMapper.keys.toList();
     deepEmotions = [];
-    finalEmotions = [];
     tooDeepEmotions = [];
+    result = [];
 
-    iterateJson(jsonStr);
-    print(basicEmotions);
     super.initState();
   }
 
-  void iterateJson(String jsonStr) {
-    Map<String, dynamic> myMap = json.decode(jsonStr);
-    List<dynamic> emotions = myMap["emotions"];
-    emotions.forEach((emotion) {
-      (emotion as Map<String, dynamic>).forEach((key, value) {
-        basicEmotions.add(key);
-      });
-    });
-  }
-
-  void findDeep(String getval) {
-    Map<String, dynamic> myMap = json.decode(jsonStr);
-    List<dynamic> emotions = myMap["emotions"];
-    emotions.forEach((emotion) {
-      (emotion as Map<String, dynamic>).forEach((key, value) {
-        if (key == getval) {
-          (value as Map<String, dynamic>).forEach((key2, value2) {
-            deepEmotions.add(key2);
-            tooDeepEmotions.add(value2);
-          });
-        }
-      });
-    });
-    print(deepEmotions);
-    print(tooDeepEmotions);
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.8,
-      width: MediaQuery.of(context).size.width * 0.8,
+      height: MediaQuery.of(context).size.height * 0.7,
+      width: MediaQuery.of(context).size.width,
       child: Column(
         children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Container(
-              child: Text(
-                'How did you feel then ?',
-                style: Ui.sheetHeadingStyle,
+          Row(
+            children: <Widget>[
+              Spacer(),
+              FlatButton(
+                child: Text(
+                  'Done',
+                  style: TextStyle(color: Colors.red, fontSize: 17.0),
+                ),
+                onPressed: () => {
+                  emotionsForSegment = result,
+                  Navigator.pop(context),
+                  bringingInEmotions(),
+                },
               ),
-            ),
+            ],
           ),
-          Divider(thickness: 1.0,),
+          SizedBox(
+            height: 40.0,
+            child: result.isEmpty
+                ? Container(
+                    child: Text(
+                      'How did you feel then ?',
+                      style: Ui.sheetHeadingStyle,
+                    ),
+                  )
+                : Padding(
+                    padding: EdgeInsets.only(bottom: 5.0),
+                    child: userSelectedEmotionsWidget(),
+                  ),
+          ),
+          Divider(
+            thickness: 1.0,
+          ),
           Expanded(
             child: Row(
-              mainAxisSize: MainAxisSize.max,
+              mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Spacer(),
-                getTextWidgets(basicEmotions),
+                basicEmotionWidget(basicEmotions),
                 Spacer(),
-                getDeepTextWidgets(deepEmotions),
+                deepEmotionWidget(deepEmotions),
                 Spacer(),
-                getFinalTextWidgets(finalEmotions),
+                tooDeepEmotionWidget(tooDeepEmotions),
                 Spacer(),
               ],
             ),
@@ -93,80 +93,108 @@ class _EmotionSheetState extends State<EmotionSheet> {
     );
   }
 
-  Widget getTextWidgets(List<String> strings) {
-    return new Column(
+  Widget basicEmotionWidget(List<String> strings) {
+    return Column(
       children: strings
-          .map((item) => new FlatButton(
+          .map(
+            (basicEmotion) => InkWell(
+              onLongPress: () => setState(() {
+                result.add(basicEmotion);
+              }),
+              onTap: () => setState(() {
+                selectedBasicEmotion = basicEmotion;
+                deepEmotions = [];
+                tooDeepEmotions = [];
+                deepEmotions = emotionMapper[basicEmotion].keys.toList();
+                print("Deep Emotions are :");
+                print(deepEmotions);
+                colorVal = Ui.emotionColors[basicEmotion];
+              }),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
                 child: Text(
-                  item,
-                  style: Ui.whiteButtonTextStyle,
+                  basicEmotion,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: Ui.emotionTextFontSize,
+                    color: Ui.emotionColors[basicEmotion],
+                  ),
                 ),
-                onPressed: () => {
-                  setState(() {
-                    deepEmotions = [];
-                    finalEmotions = [];
-                    findDeep(item);
-                    deep = false;
-                    colorVal =
-                        Color(coloredEmotions[basicEmotions.indexOf(item)]);
-                  }),
-                },
-                shape: Ui.borderDefined,
-                color: Color(coloredEmotions[basicEmotions.indexOf(item)]),
+              ),
+            ),
+          )
+          .toList(),
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+    );
+  }
+
+  Widget deepEmotionWidget(List<String> strings) {
+    return Column(
+      children: strings
+          .map((deepEmotion) => InkWell(
+                onLongPress: () => setState(() {
+                  print('Deep Emotion ' + deepEmotion + ' Added !!');
+                  result.add(deepEmotion);
+                }),
+                onTap: () => setState(() {
+                  selectedDeepEmotion = deepEmotion;
+                  tooDeepEmotions = [];
+                  tooDeepEmotions =
+                      emotionMapper[selectedBasicEmotion][deepEmotion];
+                  print("Too Deep Emotions are :");
+                  print(tooDeepEmotions);
+                }),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    deepEmotion,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: Ui.emotionTextFontSize,
+                      color: colorVal,
+                    ),
+                  ),
+                ),
               ))
           .toList(),
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     );
   }
 
-  Widget getDeepTextWidgets(List<String> strings) {
-    List<String> tempList;
-    return new Column(
+  Widget tooDeepEmotionWidget(List<String> strings) {
+    return Column(
       children: strings
-          .map((item) => new FlatButton(
-                child: Text(
-                  item,
-                  style: Ui.whiteButtonTextStyle,
+          .map((finalEmotion) => InkWell(
+                onLongPress: () => setState(() {
+                  result.add(finalEmotion);
+                }),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    finalEmotion,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: Ui.emotionTextFontSize,
+                      color: colorVal,
+                    ),
+                  ),
                 ),
-                onPressed: () => {
-                  tempList = [],
-                  for (var i = 0; i < deepEmotions.length; i++)
-                    {
-                      if (item == deepEmotions[i])
-                        {
-                          for (var j = 0; j < 2; j++)
-                            {
-                              tempList.add(tooDeepEmotions[i][j]),
-                            },
-                        },
-                    },
-                  finalEmotions = tempList,
-                  setState(() {
-                    deep = true;
-                  }),
-                },
-                shape: Ui.borderDefined,
-                color: colorVal,
               ))
           .toList(),
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
     );
   }
 
-  Widget getFinalTextWidgets(List<String> strings) {
-    return new Column(
-      children: strings
-          .map((item) => new FlatButton(
-                child: Text(
-                  item,
-                  style: Ui.whiteButtonTextStyle,
+  Widget userSelectedEmotionsWidget() {
+    return Row(
+      children: result
+          .map((item) => Text(
+                item,
+                style: TextStyle(
+                  color: Ui.emotionColors[allEmotionsMappedToBase[item]],
+                  fontWeight: FontWeight.w600,
+                  fontSize: 15.0,
                 ),
-                onPressed: () => {
-                  print('Final Emotion is : ' + item),
-                  Navigator.pop(context),
-                },
-                shape: Ui.borderDefined,
-                color: colorVal,
               ))
           .toList(),
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
