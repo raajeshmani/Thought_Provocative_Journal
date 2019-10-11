@@ -1,6 +1,6 @@
-# thought_provocative_journal
+# Thought Provocative Journal
 
-A new Flutter project.
+A Flutter based clean and minimalistic journal which allows you to tag emotions and people to events in your life for future analysis.
 
 ## Screens in this app
 
@@ -15,7 +15,89 @@ A new Flutter project.
   <img src="https://drive.google.com/uc?export=view&id=1KYAEd37ztnsXcs5ehxsD7MwZCU8g8UHv"  height="340em" />
   <img src="https://drive.google.com/uc?export=view&id=1KG2GOj0CmQnlwqbIOCViwBO0NH3S6lWq"  height="340em" /> 
   <img src="https://drive.google.com/uc?export=view&id=1KOmOUp_bcbW274ZV90-r5yppYDVb1Qri"  height="340em" /> 
+  <img src="https://drive.google.com/uc?export=view&id=1MEV41tUi7c3Lc8ETX9npyYdN5rxxSxIK"  height="340em" /> 
+  
 </p>
+
+## Custom Editions to Default Package
+
+#### material/bottom_sheet.dart - _ModalBottomSheetLayout
+
+```
+BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    return BoxConstraints(
+      minWidth: constraints.maxWidth,
+      maxWidth: constraints.maxWidth,
+      minHeight: 0.0,
+      // maxHeight: isScrollControlled
+      //   ? constraints.maxHeight
+      //   : constraints.maxHeight * 9.0 / 16.0,
+      maxHeight: constraints.maxHeight,
+    );
+```
+
+
+#### material/text_selection.dart - _TextSelectionToolbar
+
+```
+
+const _TextSelectionToolbar({
+    Key key,
+    this.handleEmotion,
+    this.handleCut,
+    this.handleCopy,
+    this.handlePaste,
+    this.handleSelectAll,
+}) : super(key: key);
+
+final VoidCallback handleEmotion;  
+final VoidCallback handleCut;
+final VoidCallback handleCopy;
+final VoidCallback handlePaste;
+final VoidCallback handleSelectAll;
+
+// Inside Build 
+
+items.add(FlatButton(child: Text('EMOTION'), onPressed: handleEmotion));
+
+```
+
+#### material/text_selection.dart - _MaterialTextSelectionControls
+
+```
+child: _TextSelectionToolbar(
+    handleEmotion: () => handleEmotion(delegate),
+    handleCut: canCut(delegate) ? () => handleCut(delegate) : null,
+    handleCopy: canCopy(delegate) ? () => handleCopy(delegate) : null,
+    handlePaste: canPaste(delegate) ? () => handlePaste(delegate) : null,
+    handleSelectAll:
+        canSelectAll(delegate) ? () => handleSelectAll(delegate) : null,
+),
+````
+
+#### widgets/text_selection.dart - TextSelectionControls
+
+```
+import 'package:thought_provocative_journal/tools/text_input_screen.dart';
+```
+
+```
+// Custom Function
+
+  void handleEmotion(TextSelectionDelegate delegate) {
+    final TextEditingValue value = delegate.textEditingValue;
+    String selectedText = value.selection.textInside(value.text);
+    delegate.textEditingValue = TextEditingValue(
+      text: value.text,
+      selection: TextSelection.collapsed(offset: value.selection.end),
+    );
+    delegate.bringIntoView(delegate.textEditingValue.selection.extent);
+    delegate.hideToolbar();
+
+    // Custom Function which is imported
+    works(selectedText);
+  }
+```
 
 ## Getting Started
 
