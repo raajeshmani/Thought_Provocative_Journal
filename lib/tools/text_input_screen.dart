@@ -93,7 +93,8 @@ class _TextInputScreenState extends State<TextInputScreen> {
                   if (data.text.isEmpty) {
                     print("Paste called on null");
                   } else {
-                    textEditingController.text = textEditingController.text + data.text;
+                    textEditingController.text =
+                        textEditingController.text + data.text;
                   }
                 },
               ),

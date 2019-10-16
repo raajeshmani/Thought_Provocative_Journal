@@ -19,6 +19,16 @@ A Flutter based clean and minimalistic journal which allows you to tag emotions 
   
 </p>
 
+## Jot it Down !!
+
+- The best story you've ever heard is the one you told yourself in the head
+- Make the design smoooooooth => Smoooooooooothhh Operator ==> Smmmmoooooth Operationnn
+- Make a poof Feature => Ever found a day where you just had to tell the story but don't want it recorded.
+    - We got that covered for ya. Make a Poof Story which auto deletes in a day.
+    - But on one condition. This has word limit. Make sure you have figured out exactly what should be poofed from your head
+
+
+
 ## Custom Editions to Default Package
 
 #### material/bottom_sheet.dart - _ModalBottomSheetLayout

@@ -37,7 +37,7 @@ class _TagWidgetState extends State<TagWidget> {
   void filterSearchResults(String query) {
     List<String> dummySearchList = List<String>();
     dummySearchList.addAll(duplicateEmotionItems);
-    if (query.isNotEmpty && query.startsWith("@")) {
+    if (query.isNotEmpty && query.startsWith("#")) {
       String emotionQuery = query.substring(1);
       List<String> dummyListData = List<String>();
       dummySearchList.forEach((item) {
